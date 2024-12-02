@@ -29,6 +29,7 @@ const lineProperties = computed(() => {
   }
 })
 
+// should be optimized to only update when really necessary
 const nodeStore = useNodeStore()
 watch(nodeStore.nodes, async () => {
   await nextTick()

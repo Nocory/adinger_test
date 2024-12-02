@@ -26,13 +26,7 @@
       />
     </div>
     <div class="childNodes flex flex-col" v-if="node.isExpanded">
-      <ProjectNode
-        :parent-el="nodeEl"
-        :node-id="nodeId"
-        :key="nodeId"
-        v-for="(nodeId, index) in node.childIds"
-        :ref="childNodeRefs.set"
-      >
+      <ProjectNode :parent-el="nodeEl" :node-id="nodeId" :key="nodeId" v-for="(nodeId, index) in node.childIds">
         {{ index + 1 }}
       </ProjectNode>
     </div>
@@ -40,13 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type ComponentPublicInstance } from 'vue'
+import { computed, ref } from 'vue'
 import AddButton from './AddButton.vue'
 import NodeConnection from './NodeConnection.vue'
 import DeleteButton from './DeleteButton.vue'
 import ProjectNode from '@/components/ProjectNode.vue'
 import { useNodeStore } from '@/stores/node'
-import { useTemplateRefsList } from '@vueuse/core'
 import { getBackgroundClass } from '@/util/nodeInfo'
 
 const props = defineProps<{
@@ -54,21 +47,10 @@ const props = defineProps<{
   parentEl: HTMLElement | null
 }>()
 
-const childNodeRefs = useTemplateRefsList<ComponentPublicInstance>()
-
 const nodeEl = ref<HTMLElement | null>(null)
-
-const childNodeEls = ref<HTMLElement[]>([])
-watch(
-  () => childNodeRefs.value.length,
-  () => {
-    childNodeEls.value = childNodeRefs.value.map((ref) => ref.$el as HTMLElement)
-  },
-)
 
 const nodeStore = useNodeStore()
 const node = computed(() => nodeStore.nodes[props.nodeId])
-
 const backgroundClass = getBackgroundClass(node.value.nodeType)
 
 const toggleChildNodeVisibility = () => {
